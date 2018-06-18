@@ -1,29 +1,71 @@
 import React, {Component} from 'react';
 import './App.css';
 
-class Square extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: null
-        };
+function calculateWinner(squares) {
+    const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+            return squares[a];
+        }
     }
+    return null;
+}
+
+class Square extends React.Component {
     render() {
         return (
-            <button className="square" onClick={() => this.setState({value: 'X'})}>
-                {this.state.value}
+            <button className="square" onClick={() => this.props.onClick()}>
+                {this.props.value}
             </button>
         );
     }
 }
 
 class Board extends React.Component {
-    renderSquare(i) {
-        return <Square value={i}/>;
+    constructor(props) {
+        super(props);
+        this.state = {
+            squares: Array(9).fill(null),
+            xIsNext: true
+        };
     }
 
+    handleClick(i) {
+        const squares = this.state.squares.slice();
+        if (calculateWinner(squares) || squares[i]) {
+            return;
+        }
+        squares[i] = this.state.xIsNext ? 'O' : 'X';
+        this.setState({
+            squares: squares,
+            xIsNext: !this.state.xIsNext,
+        });
+    }
+
+    renderSquare(i) {
+        return <Square value={this.state.squares[i]} onClick={() => this.handleClick(i)} />;
+    }
+
+
+
     render() {
-        const status = 'Next player: X';
+        const winner = calculateWinner(this.state.squares);
+        let status;
+        if (winner) {
+            status = 'Winner: ' + winner;
+        } else {
+            status = 'Next: ' + (this.state.xIsNext ? 'O' : 'X');
+        }
 
         return (
             <div>
@@ -69,13 +111,8 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <div className="App-container">
-                    <header className="App-header">
-                        <h1 className="App-title">Tic Tac Toe</h1>
-                    </header>
-                    <Game />
-                </div>
-
+                <h1 className="App-title">Tic Tac Toe</h1>
+                <Game />
             </div>
         );
     }
