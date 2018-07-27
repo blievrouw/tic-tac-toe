@@ -40,7 +40,7 @@ ol, ul {
 
 .game {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 
@@ -48,7 +48,7 @@ ol, ul {
 }
 
 .game-info {
-    margin-left: 20px;
+    margin-top: 20px;
 }
 
 .status {
